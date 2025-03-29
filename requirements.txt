@@ -4,3 +4,7 @@ scikit-learn
 tensorflow
 seaborn
 numpy
+flask
+dotenv
+dabl
+autofeat
