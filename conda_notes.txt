@@ -1,0 +1,2 @@
+Activate ENV: 
+conda activate C:\Users\HP\OneDrive\Documents\PurifAI\purifai
