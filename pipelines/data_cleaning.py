@@ -9,19 +9,16 @@ def remove_special_chars(text):
         return re.sub(r"[^\w\s]", "", text)  # Keeps only letters, numbers, and spaces
     return text
 
-def clean_and_standardize_data(file_path, corr_threshold=0.9):
+def remove_non_ascii(text):
+    """Removes all non-ASCII characters, including emojis and special symbols."""
+    return text.encode("ascii", "ignore").decode()
+
+def clean_data(df, corr_threshold=0.9):
     """
     Cleans messy dataset: fixes datatypes, fills missing values, removes outliers,
-    drops highly correlated columns, removes special symbols, and standardizes numerical features.
+    drops highly correlated columns, and removes special symbols.
     """
     
-    # Load dataset
-    try:
-        df = pd.read_csv(file_path, low_memory=False)
-    except Exception as e:
-        print(f"Error loading file: {e}")
-        return None
-
     # Drop duplicates & completely empty columns
     df = df.drop_duplicates()
     df = df.dropna(axis=1, how='all')
@@ -42,6 +39,7 @@ def clean_and_standardize_data(file_path, corr_threshold=0.9):
     # Remove special symbols & emojis from text columns
     text_cols = df.select_dtypes(include=['object']).columns
     df[text_cols] = df[text_cols].applymap(remove_special_chars)
+    df[text_cols] = df[text_cols].applymap(remove_non_ascii)
 
     # Fill missing values intelligently
     for col in df.columns:
@@ -64,19 +62,15 @@ def clean_and_standardize_data(file_path, corr_threshold=0.9):
     drop_cols = [column for column in upper_triangle.columns if any(upper_triangle[column] > corr_threshold)]
     df = df.drop(columns=drop_cols)
 
-    # ✅ Recalculate numeric_cols after dropping correlated features
-    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
-
-    # Standardize numerical columns
-    scaler = StandardScaler()
-    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
-
     return df
 
 
-"""# Example usage
-file_path = "dataset.csv"
-cleaned_standardized_df = clean_and_standardize_data(file_path)
-
-print(cleaned_standardized_df.head())
-"""
+# Example usage
+"""file_path = "dataset.csv"
+try:
+    df = pd.read_csv(file_path, low_memory=False)
+    cleaned_df = clean_data(df)
+    standardized_df = standardize_data(cleaned_df)
+    print(standardized_df.head())
+except Exception as e:
+    print(f"Error loading file: {e}")"""
