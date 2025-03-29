@@ -57,6 +57,9 @@
         </div>
         <button onclick="uploadFile()" class="w-full mt-4 bg-gray-600 hover:bg-gray-500 py-3 rounded-lg font-semibold text-black text-lg">Start Processing</button>
         <p id="statusMessage" class="mt-4 text-gray-400"></p>
+        <div id="downloadSection" class="hidden mt-4">
+            <a id="downloadLink" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 rounded-lg">Download Processed File</a>
+        </div>
     </section>
 
     <script>
@@ -64,22 +67,25 @@
             let file = this.files[0];
             document.getElementById("fileName").textContent = file ? `Selected: ${file.name}` : "No file chosen";
         });
-    
+
         function uploadFile() {
             let fileInput = document.getElementById("fileInput");
             let statusMessage = document.getElementById("statusMessage");
-    
+            let downloadSection = document.getElementById("downloadSection");
+            let downloadLink = document.getElementById("downloadLink");
+
             if (!fileInput.files.length) {
                 statusMessage.textContent = "Please select a file first.";
                 return;
             }
-    
+
             let formData = new FormData();
             formData.append("file", fileInput.files[0]);
-    
+
             statusMessage.textContent = "Uploading... Please wait.";
-    
-            fetch("/upload", {
+            downloadSection.classList.add("hidden");
+
+            fetch("/service", {
                 method: "POST",
                 body: formData
             })
@@ -88,7 +94,12 @@
                 if (data.error) {
                     statusMessage.textContent = `Error: ${data.error}`;
                 } else {
-                    statusMessage.textContent = "Upload successful!";
+                    statusMessage.textContent = "Processing complete!";
+                    downloadLink.href = data.download_link;
+                    downloadSection.classList.remove("hidden");
+
+                    
+
                 }
             })
             .catch(error => {

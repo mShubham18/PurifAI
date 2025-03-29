@@ -11,7 +11,9 @@ def remove_special_chars(text):
 
 def remove_non_ascii(text):
     """Removes all non-ASCII characters, including emojis and special symbols."""
-    return text.encode("ascii", "ignore").decode()
+    if isinstance(text, str):  # Ensure it's a string before calling encode()
+        return text.encode("ascii", "ignore").decode()
+    return text  # Return as is if it's not a string
 
 def clean_data(df, corr_threshold=0.9):
     """
@@ -36,9 +38,9 @@ def clean_data(df, corr_threshold=0.9):
             except:
                 pass  # If it fails, keep it as a categorical/text column
 
-    # Remove special symbols & emojis from text columns
+    # Remove special symbols & emojis from text columns safely
     text_cols = df.select_dtypes(include=['object']).columns
-    df[text_cols] = df[text_cols].applymap(remove_special_chars)
+    df[text_cols] = df[text_cols].fillna("").applymap(remove_special_chars)
     df[text_cols] = df[text_cols].applymap(remove_non_ascii)
 
     # Fill missing values intelligently
@@ -64,13 +66,3 @@ def clean_data(df, corr_threshold=0.9):
 
     return df
 
-
-# Example usage
-"""file_path = "dataset.csv"
-try:
-    df = pd.read_csv(file_path, low_memory=False)
-    cleaned_df = clean_data(df)
-    standardized_df = standardize_data(cleaned_df)
-    print(standardized_df.head())
-except Exception as e:
-    print(f"Error loading file: {e}")"""
