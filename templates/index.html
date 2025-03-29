@@ -21,8 +21,8 @@
         <img >
         <div class="flex gap-12 flex-wrap justify-center">
             <a href="#home" class="hover:text-gray-400 text-lg">Home</a>
-            <a href="service.html" target="_blank" class="hover:text-gray-400 text-lg">Service</a>
-            <a href="plans.html" target="_blank" class="hover:text-gray-400 text-lg">Plans</a>
+            <a href="{{ url_for('service') }}" target="_blank" class="hover:text-gray-400 text-lg">Service</a>
+            <a href="{{ url_for('plans') }}"target="_blank" class="hover:text-gray-400 text-lg">Plans</a>
             <a href="#contact" class="hover:text-gray-400 text-lg">Contact</a>
         </div>
         <button id="themeToggle" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-all">
