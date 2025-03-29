@@ -68,19 +68,32 @@
         function uploadFile() {
             let fileInput = document.getElementById("fileInput");
             let statusMessage = document.getElementById("statusMessage");
-            let downloadLink = document.getElementById("downloadLink");
     
             if (!fileInput.files.length) {
                 statusMessage.textContent = "Please select a file first.";
                 return;
             }
     
-            statusMessage.textContent = "Processing... Please wait.";
-            setTimeout(() => {
-                statusMessage.textContent = "Processing Complete! You can now download your file.";
-                downloadLink.classList.remove("hidden");
-                downloadLink.href = "#"; // Replace with actual processed file link
-            }, 3000);
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+    
+            statusMessage.textContent = "Uploading... Please wait.";
+    
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    statusMessage.textContent = `Error: ${data.error}`;
+                } else {
+                    statusMessage.textContent = "Upload successful!";
+                }
+            })
+            .catch(error => {
+                statusMessage.textContent = "Upload failed. Please try again.";
+            });
         }
     </script>
     
