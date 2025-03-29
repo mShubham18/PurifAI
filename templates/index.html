@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Cleaning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+
+
+<body class="bg-black text-white flex flex-col items-center min-h-screen">
+
+    <!-- Animated Navbar -->
+    <nav id="navbar" class="fixed top-0 w-full bg-gray-900 px-8 py-5 flex justify-between items-center shadow-lg z-50 transition-all duration-300">
+        <img >
+        <div class="flex gap-12 flex-wrap justify-center">
+            <a href="#home" class="hover:text-gray-400 text-lg">Home</a>
+            <a href="service.html" target="_blank" class="hover:text-gray-400 text-lg">Service</a>
+            <a href="plans.html" target="_blank" class="hover:text-gray-400 text-lg">Plans</a>
+            <a href="#contact" class="hover:text-gray-400 text-lg">Contact</a>
+        </div>
+        <button id="themeToggle" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-all">
+            🌙 Dark
+        </button>
+    </nav>
+
+    <!-- Spacer to prevent content overlap -->
+    <div class="h-16"></div>
+
+    <!-- Home Section -->
+    <!-- Homepage Section -->
+    <section id="home" class="w-3/4 text-center py-16">
+        <h2 id="typing-text" class="text-5xl font-extrabold text-white min-h-[64px]"></h2> <!-- Typing effect target -->
+        <p class="mt-6 text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
+            Unlock the power of AI-driven automation to clean and preprocess datasets with unparalleled efficiency. 
+            Say goodbye to inconsistent, duplicate, and missing data—experience precision, speed, and accuracy like never before.
+        </p>
+    
+        <!-- Key Benefits -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-semibold text-white">🚀 Automated Cleaning</h3>
+                <p class="mt-3 text-gray-400">AI-powered deduplication, anomaly detection, and missing value imputation for a flawless dataset.</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-semibold text-white">📊 Data Integrity</h3>
+                <p class="mt-3 text-gray-400">Enhance data accuracy, consistency, and reliability for improved decision-making.</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-semibold text-white">⚡ Efficient Processing</h3>
+                <p class="mt-3 text-gray-400">Reduce manual effort and save time with AI-driven preprocessing.</p>
+            </div>
+        </div>
+    
+        <!-- Workflow Section -->
+        <div class="mt-16">
+            <h3 class="text-3xl font-bold text-white">How It Works</h3>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6 text-gray-300">
+                <div class="p-6 border border-gray-700 rounded-lg">
+                    <h4 class="text-xl font-semibold">1️⃣ Upload Dataset</h4>
+                    <p class="mt-2 text-gray-400">Securely upload your raw dataset to our AI-powered platform.</p>
+                </div>
+                <div class="p-6 border border-gray-700 rounded-lg">
+                    <h4 class="text-xl font-semibold">2️⃣ Initiate AI Cleaning</h4>
+                    <p class="mt-2 text-gray-400">Trigger the automated pipeline to clean and preprocess your data.</p>
+                </div>
+                <div class="p-6 border border-gray-700 rounded-lg">
+                    <h4 class="text-xl font-semibold">3️⃣ AI Processing</h4>
+                    <p class="mt-2 text-gray-400">AI performs deduplication, anomaly detection, and imputation.</p>
+                </div>
+                <div class="p-6 border border-gray-700 rounded-lg">
+                    <h4 class="text-xl font-semibold">4️⃣ Download Clean Data</h4>
+                    <p class="mt-2 text-gray-400">Get a fully cleaned, structured, and analysis-ready dataset.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="w-3/4 text-center py-10">
+     <h2 class="text-3xl font-bold text-gray-300">Contact Us</h2>
+        <p class="mt-4 text-gray-400">Email: support@aicleaning.com</p>
+        <p class="text-gray-400">Phone: +123 456 7890</p>
+    </section>
+
+    <script>
+
+<!-- Typing Animation Script -->    
+    const text = "Transform Your Data with AI-Powered Cleaning";
+    let index = 0;
+    
+    function typeEffect() {
+        if (index < text.length) {
+            document.getElementById("typing-text").innerHTML += text.charAt(index);
+            index++;
+            setTimeout(typeEffect, 50); // Adjust speed here
+        }
+    }
+
+    window.onload = () => {
+        setTimeout(typeEffect, 500); // Small delay before animation starts
+    };
+
+
+    const themeToggle = document.getElementById("themeToggle");
+    const body = document.body;
+
+    // Check for saved theme in localStorage
+    if (localStorage.getItem("theme") === "light") {
+        body.classList.remove("bg-black", "text-white");
+        body.classList.add("bg-white", "text-black");
+        themeToggle.innerHTML = "☀️ Light";
+    }
+
+    themeToggle.addEventListener("click", () => {
+        if (body.classList.contains("bg-black")) {
+            body.classList.remove("bg-black", "text-white");
+            body.classList.add("bg-white", "text-black");
+            themeToggle.innerHTML = "☀️ Light";
+            localStorage.setItem("theme", "light");
+        } else {
+            body.classList.remove("bg-white", "text-black");
+            body.classList.add("bg-black", "text-white");
+            themeToggle.innerHTML = "🌙 Dark";
+            localStorage.setItem("theme", "dark");
+        }
+    });
+        document.getElementById("fileInput").addEventListener("change", function() {
+            let file = this.files[0];
+            document.getElementById("fileName").textContent = file ? `Selected: ${file.name}` : "No file chosen";
+        });
+
+        function uploadFile() {
+            let fileInput = document.getElementById("fileInput");
+            let statusMessage = document.getElementById("statusMessage");
+            let downloadLink = document.getElementById("downloadLink");
+
+            if (!fileInput.files.length) {
+                statusMessage.textContent = "Please select a file first.";
+                return;
+            }
+
+            statusMessage.textContent = "Processing... Please wait.";
+            setTimeout(() => {
+                statusMessage.textContent = "Processing Complete! You can now download your file.";
+                downloadLink.classList.remove("hidden");
+                downloadLink.href = "#"; // Replace with actual processed file link
+            }, 3000);
+        }
+
+        // Navbar Animation on Scroll
+        window.addEventListener("scroll", function () {
+            let navbar = document.getElementById("navbar");
+            if (window.scrollY > 50) {
+                navbar.classList.add("bg-opacity-80", "backdrop-blur-lg", "p-3", "shadow-md");
+                navbar.classList.remove("p-4");
+            } else {
+                navbar.classList.remove("bg-opacity-80", "backdrop-blur-lg", "p-3", "shadow-md");
+                navbar.classList.add("p-4");
+            }
+        });
+    </script>
+
+</body>
+</html>
