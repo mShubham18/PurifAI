@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Data Generation - PurifAI</title>
+    <title>PurifAI - Generate Synthetic Data</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -17,12 +17,15 @@
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+        .glow-text {
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen">
     <nav id="navbar" class="fixed top-0 w-full bg-gray-900 px-8 py-4 flex justify-between items-center shadow-lg z-50 transition-all duration-300">
         <div class="text-2xl font-bold text-white tracking-wide">
-            Purif<span class="text-black-500">AI</span>
+            Purif<span class="text-white-500">AI</span>
         </div>
         <div class="flex gap-8">
             <a href="{{ url_for('home') }}" class="hover:text-blue-400 text-lg transition duration-300">Home</a>
@@ -36,8 +39,8 @@
 
     <!-- Hero Section -->
     <section class="w-3/4 text-center py-16 fade-in">
-        <h2 class="text-4xl font-bold text-gray-400 glow-text">Generate Synthetic Data with AI</h2>
-        <p class="mt-4 text-gray-300 text-lg">Create realistic synthetic data points based on your sample dataset.</p>
+        <h2 class="text-4xl font-bold text-gray-400">Generate Synthetic Data with AI</h2>
+        <p class="mt-4 text-gray-300 text-lg">Create high-quality, bias-free synthetic data that preserves statistical properties and relationships</p>
     </section>
 
     <!-- Features Section -->
@@ -45,26 +48,29 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
                 <h3 class="text-xl font-bold text-white flex items-center justify-center">
-                    🎯 Accurate Generation
+                    <i class="fas fa-balance-scale mr-2"></i>
+                    Bias-Free Generation
                 </h3>
                 <p class="mt-2 text-gray-400">
-                    AI-powered generation that maintains data relationships and statistical properties.
+                    Ensures balanced distributions and prevents overfitting in generated data.
                 </p>
             </div>
             <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
                 <h3 class="text-xl font-bold text-white flex items-center justify-center">
-                    🔄 Data Consistency
+                    <i class="fas fa-chart-line mr-2"></i>
+                    Correlation Preservation
                 </h3>
                 <p class="mt-2 text-gray-400">
-                    Preserves data types, ranges, and relationships in generated data.
+                    Maintains relationships between numeric variables in your dataset.
                 </p>
             </div>
             <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
                 <h3 class="text-xl font-bold text-white flex items-center justify-center">
-                    ⚡ Fast Processing
+                    <i class="fas fa-shield-alt mr-2"></i>
+                    Quality Control
                 </h3>
                 <p class="mt-2 text-gray-400">
-                    Generate thousands of synthetic data points in minutes.
+                    Advanced outlier detection and handling for reliable data.
                 </p>
             </div>
         </div>
@@ -73,21 +79,80 @@
     <!-- Generation Section -->
     <section class="w-3/4 text-center py-12 fade-in">
         <h2 class="text-3xl font-bold text-gray-300">Generate Your Data</h2>
-        <div class="border-2 border-dashed border-gray-500 p-6 rounded-lg mt-4">
-            <input type="file" id="fileInput" class="hidden">
-            <label for="fileInput" class="cursor-pointer block py-4 px-6 bg-gray-500 hover:bg-gray-400 text-black font-semibold rounded-lg">Upload Sample Dataset</label>
-            <p id="fileName" class="text-gray-400 mt-2">No file selected</p>
-            
-            <div class="mt-4">
-                <label for="numPoints" class="block text-gray-300 mb-2">Number of Points to Generate:</label>
-                <input type="number" id="numPoints" min="100" max="10000" value="1000" 
-                       class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
+        <div class="bg-gray-800 p-8 rounded-lg border border-gray-500 mt-6">
+            <form action="{{ url_for('generate') }}" method="post" enctype="multipart/form-data">
+                <div class="mb-6">
+                    <input type="file" id="fileInput" name="file" accept=".csv,.xlsx" class="hidden">
+                    <label for="fileInput" class="cursor-pointer inline-block py-4 px-6 bg-gray-600 hover:bg-gray-900 text-white font-semibold rounded-lg transition duration-300">
+                        Upload Sample Dataset
+                    </label>
+                    <p id="fileName" class="text-gray-400 mt-2">No file selected</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="text-left">
+                        <label for="num_points" class="block text-gray-300 mb-2">Number of Rows:</label>
+                        <input type="number" id="num_points" name="num_points" min="100" max="100000" value="1000" 
+                               class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="text-left">
+                        <label for="correlation_strength" class="block text-gray-300 mb-2">Correlation Strength:</label>
+                        <select id="correlation_strength" name="correlation_strength" 
+                                class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="strong">Strong (Preserve all correlations)</option>
+                            <option value="moderate" selected>Moderate (Balance between correlation and diversity)</option>
+                            <option value="weak">Weak (More diverse data)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="text-left">
+                        <label for="outlier_handling" class="block text-gray-300 mb-2">Outlier Handling:</label>
+                        <select id="outlier_handling" name="outlier_handling" 
+                                class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="strict">Strict (Remove extreme outliers)</option>
+                            <option value="moderate" selected>Moderate (Balance outliers)</option>
+                            <option value="preserve">Preserve (Keep original distribution)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="text-left">
+                        <label for="diversity_level" class="block text-gray-300 mb-2">Data Diversity:</label>
+                        <select id="diversity_level" name="diversity_level" 
+                                class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="high">High (Maximum variety)</option>
+                            <option value="medium" selected>Medium (Balanced variety)</option>
+                            <option value="low">Low (Closer to original)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-gray-600 hover:bg-gray-900 py-3 rounded-lg font-semibold text-white text-lg transition duration-300">
+                    Generate Data
+                </button>
+            </form>
         </div>
-        <button onclick="generateData()" class="w-full mt-4 bg-gray-600 hover:bg-gray-500 py-3 rounded-lg font-semibold text-black text-lg">Generate Data</button>
-        <p id="statusMessage" class="mt-4 text-gray-400"></p>
-        <div id="downloadSection" class="hidden mt-4">
-            <a id="downloadLink" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 rounded-lg">Download Generated Data</a>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="w-3/4 py-12 text-center fade-in">
+        <h2 class="text-3xl font-bold text-gray-300 mb-8">How It Works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
+                <h3 class="text-xl font-bold text-white mb-2">Upload Your Data</h3>
+                <p class="text-gray-400">Upload your original dataset in CSV or Excel format</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
+                <h3 class="text-xl font-bold text-white mb-2">Configure Options</h3>
+                <p class="text-gray-400">Set your preferences for data generation</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
+                <h3 class="text-xl font-bold text-white mb-2">Generate Data</h3>
+                <p class="text-gray-400">Get your synthetic dataset with preserved properties</p>
+            </div>
         </div>
     </section>
 
@@ -97,43 +162,63 @@
             document.getElementById("fileName").textContent = file ? `Selected: ${file.name}` : "No file chosen";
         });
 
-        function generateData() {
-            let fileInput = document.getElementById("fileInput");
-            let numPoints = document.getElementById("numPoints").value;
-            let statusMessage = document.getElementById("statusMessage");
-            let downloadSection = document.getElementById("downloadSection");
-            let downloadLink = document.getElementById("downloadLink");
-
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const fileInput = document.getElementById('fileInput');
+            
             if (!fileInput.files.length) {
-                statusMessage.textContent = "Please select a file first.";
+                alert('Please select a file first.');
                 return;
             }
-
-            let formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-            formData.append("num_points", numPoints);
-
-            statusMessage.textContent = "Generating data... Please wait.";
-            downloadSection.classList.add("hidden");
-
-            fetch("/generate", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
+            
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Generating Data...';
+            
+            try {
+                const formData = new FormData(this);
+                
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
                 if (data.error) {
-                    statusMessage.textContent = `Error: ${data.error}`;
-                } else {
-                    statusMessage.textContent = "Data generated successfully!";
-                    downloadLink.href = data.download_link;
-                    downloadSection.classList.remove("hidden");
+                    throw new Error(data.error);
                 }
-            })
-            .catch(error => {
-                statusMessage.textContent = "Generation failed. Please try again.";
-            });
-        }
+                
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.className = 'text-green-500 mt-4 text-center';
+                successMessage.textContent = data.message;
+                this.insertBefore(successMessage, submitButton);
+                
+                // Create download button
+                const downloadButton = document.createElement('a');
+                downloadButton.href = data.download_link;
+                downloadButton.className = 'w-full bg-green-500 hover:bg-green-600 py-3 rounded-lg font-semibold text-white text-lg transition duration-300 mt-4 block text-center';
+                downloadButton.textContent = 'Download Generated Data';
+                
+                // Replace submit button with download button
+                submitButton.parentNode.replaceChild(downloadButton, submitButton);
+                
+            } catch (error) {
+                // Show error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'text-red-500 mt-4 text-center';
+                errorDiv.textContent = error.message;
+                this.insertBefore(errorDiv, submitButton);
+                
+                // Reset submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Generate Data';
+            }
+        });
     </script>
 </body>
 </html> 
