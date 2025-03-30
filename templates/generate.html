@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Generation - PurifAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #0d0d0d;
+            color: #ffffff;
+        }
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeInUp 1s ease-out forwards; }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen">
+    <nav id="navbar" class="fixed top-0 w-full bg-gray-900 px-8 py-4 flex justify-between items-center shadow-lg z-50 transition-all duration-300">
+        <div class="text-2xl font-bold text-white tracking-wide">
+            Purif<span class="text-black-500">AI</span>
+        </div>
+        <div class="flex gap-8">
+            <a href="{{ url_for('home') }}" class="hover:text-blue-400 text-lg transition duration-300">Home</a>
+            <a href="{{ url_for('service') }}" class="hover:text-blue-400 text-lg transition duration-300">Clean Data</a>
+            <a href="{{ url_for('generate') }}" class="hover:text-blue-400 text-lg transition duration-300">Generate Data</a>
+            <a href="{{ url_for('plans') }}" class="hover:text-blue-400 text-lg transition duration-300">Plans</a>
+        </div>
+    </nav>
+
+    <div class="h-16"></div>
+
+    <!-- Hero Section -->
+    <section class="w-3/4 text-center py-16 fade-in">
+        <h2 class="text-4xl font-bold text-gray-400 glow-text">Generate Synthetic Data with AI</h2>
+        <p class="mt-4 text-gray-300 text-lg">Create realistic synthetic data points based on your sample dataset.</p>
+    </section>
+
+    <!-- Features Section -->
+    <section class="w-3/4 py-12 text-center fade-in">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
+                <h3 class="text-xl font-bold text-white flex items-center justify-center">
+                    🎯 Accurate Generation
+                </h3>
+                <p class="mt-2 text-gray-400">
+                    AI-powered generation that maintains data relationships and statistical properties.
+                </p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
+                <h3 class="text-xl font-bold text-white flex items-center justify-center">
+                    🔄 Data Consistency
+                </h3>
+                <p class="mt-2 text-gray-400">
+                    Preserves data types, ranges, and relationships in generated data.
+                </p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-500">
+                <h3 class="text-xl font-bold text-white flex items-center justify-center">
+                    ⚡ Fast Processing
+                </h3>
+                <p class="mt-2 text-gray-400">
+                    Generate thousands of synthetic data points in minutes.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Generation Section -->
+    <section class="w-3/4 text-center py-12 fade-in">
+        <h2 class="text-3xl font-bold text-gray-300">Generate Your Data</h2>
+        <div class="border-2 border-dashed border-gray-500 p-6 rounded-lg mt-4">
+            <input type="file" id="fileInput" class="hidden">
+            <label for="fileInput" class="cursor-pointer block py-4 px-6 bg-gray-500 hover:bg-gray-400 text-black font-semibold rounded-lg">Upload Sample Dataset</label>
+            <p id="fileName" class="text-gray-400 mt-2">No file selected</p>
+            
+            <div class="mt-4">
+                <label for="numPoints" class="block text-gray-300 mb-2">Number of Points to Generate:</label>
+                <input type="number" id="numPoints" min="100" max="10000" value="1000" 
+                       class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        <button onclick="generateData()" class="w-full mt-4 bg-gray-600 hover:bg-gray-500 py-3 rounded-lg font-semibold text-black text-lg">Generate Data</button>
+        <p id="statusMessage" class="mt-4 text-gray-400"></p>
+        <div id="downloadSection" class="hidden mt-4">
+            <a id="downloadLink" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 rounded-lg">Download Generated Data</a>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById("fileInput").addEventListener("change", function() {
+            let file = this.files[0];
+            document.getElementById("fileName").textContent = file ? `Selected: ${file.name}` : "No file chosen";
+        });
+
+        function generateData() {
+            let fileInput = document.getElementById("fileInput");
+            let numPoints = document.getElementById("numPoints").value;
+            let statusMessage = document.getElementById("statusMessage");
+            let downloadSection = document.getElementById("downloadSection");
+            let downloadLink = document.getElementById("downloadLink");
+
+            if (!fileInput.files.length) {
+                statusMessage.textContent = "Please select a file first.";
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            formData.append("num_points", numPoints);
+
+            statusMessage.textContent = "Generating data... Please wait.";
+            downloadSection.classList.add("hidden");
+
+            fetch("/generate", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    statusMessage.textContent = `Error: ${data.error}`;
+                } else {
+                    statusMessage.textContent = "Data generated successfully!";
+                    downloadLink.href = data.download_link;
+                    downloadSection.classList.remove("hidden");
+                }
+            })
+            .catch(error => {
+                statusMessage.textContent = "Generation failed. Please try again.";
+            });
+        }
+    </script>
+</body>
+</html> 

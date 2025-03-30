@@ -5,6 +5,7 @@ from pipelines.data_cleaning import clean_data
 from pipelines.data_standardization import standardize_data
 from pipelines.column_selection import column_selection
 from components.report_generation import generate_report
+from pipelines.data_generation import generate_synthetic_data
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "processed_files"
@@ -106,6 +107,46 @@ def download_report():
 @app.route("/plans")
 def plans():
     return render_template("plans.html")
+
+@app.route("/generate", methods=["GET", "POST"])
+def generate():
+    if request.method == "POST":
+        file = request.files.get("file")
+        num_points = int(request.form.get("num_points", 1000))
+        
+        if not file or file.filename == "":
+            return jsonify({"error": "No file uploaded"}), 400
+
+        if not file.filename.lower().endswith(".csv"):
+            return jsonify({"error": "Invalid file type! Please upload a CSV file."}), 400
+
+        try:
+            # Read the sample dataset
+            df = pd.read_csv(file)
+            
+            # Generate synthetic data
+            synthetic_df = generate_synthetic_data(df, num_points)
+            
+            # Save generated data
+            output_filename = os.path.join(UPLOAD_FOLDER, "generated_data.csv")
+            synthetic_df.to_csv(output_filename, index=False)
+            
+            return jsonify({
+                "message": "Data generated successfully",
+                "download_link": "/download_generated"
+            })
+            
+        except Exception as e:
+            return jsonify({"error": f"Generation failed: {str(e)}"}), 500
+            
+    return render_template("generate.html")
+
+@app.route("/download_generated")
+def download_generated():
+    output_file = os.path.join(UPLOAD_FOLDER, "generated_data.csv")
+    if os.path.exists(output_file):
+        return send_file(output_file, as_attachment=True)
+    return "File not found", 404
 
 if __name__ == "__main__":
     app.run(debug=True)

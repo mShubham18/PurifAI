@@ -14,11 +14,11 @@
 
     <nav class="fixed top-0 w-full bg-gray-900 p-4 flex justify-between items-center shadow-lg z-50 px-6">
         <h1 class="text-xl font-bold">AI Data Cleaning</h1>
-        <div class="space-x-6">
-            <a href="index.html" class="hover:text-gray-400">Home</a>
-            <a href="service.html" class="hover:text-gray-400">Service</a>
-            <a href="plans.html" class="hover:text-gray-400">Plans</a>
-            <a href="contact.html" class="hover:text-gray-400">Contact</a>
+        <div class="flex gap-8">
+            <a href="{{ url_for('home') }}" class="hover:text-blue-400 text-lg transition duration-300">Home</a>
+            <a href="{{ url_for('service') }}" class="hover:text-blue-400 text-lg transition duration-300">Clean Data</a>
+            <a href="{{ url_for('generate') }}" class="hover:text-blue-400 text-lg transition duration-300">Generate Data</a>
+            <a href="{{ url_for('plans') }}" class="hover:text-blue-400 text-lg transition duration-300">Plans</a>
         </div>
     </nav>
 
