@@ -114,8 +114,14 @@
         </div>
         <button onclick="uploadFile()" class="w-full mt-4 bg-gray-600 hover:bg-gray-500 py-3 rounded-lg font-semibold text-black text-lg">Start Processing</button>
         <p id="statusMessage" class="mt-4 text-gray-400"></p>
-        <div id="downloadSection" class="hidden mt-4">
-            <a id="downloadLink" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 rounded-lg">Download Processed File</a>
+        <div id="downloadSection" class="hidden mt-4 space-y-4">
+            <div class="flex flex-col gap-4">
+                <a id="downloadLink" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 rounded-lg text-center">Download Processed File</a>
+                <button id="generateReportBtn" onclick="generateReport()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg">Generate Report</button>
+                <div id="reportSection" class="hidden">
+                    <a id="downloadReportLink" class="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 px-6 rounded-lg text-center">Download Report</a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -130,6 +136,7 @@
             let statusMessage = document.getElementById("statusMessage");
             let downloadSection = document.getElementById("downloadSection");
             let downloadLink = document.getElementById("downloadLink");
+            let reportSection = document.getElementById("reportSection");
 
             if (!fileInput.files.length) {
                 statusMessage.textContent = "Please select a file first.";
@@ -141,6 +148,7 @@
 
             statusMessage.textContent = "Uploading... Please wait.";
             downloadSection.classList.add("hidden");
+            reportSection.classList.add("hidden");
 
             fetch("/service", {
                 method: "POST",
@@ -154,13 +162,33 @@
                     statusMessage.textContent = "Processing complete!";
                     downloadLink.href = data.download_link;
                     downloadSection.classList.remove("hidden");
-
-                    
-
                 }
             })
             .catch(error => {
                 statusMessage.textContent = "Upload failed. Please try again.";
+            });
+        }
+
+        function generateReport() {
+            let statusMessage = document.getElementById("statusMessage");
+            let reportSection = document.getElementById("reportSection");
+            let downloadReportLink = document.getElementById("downloadReportLink");
+
+            statusMessage.textContent = "Generating report... Please wait.";
+
+            fetch("/generate_report")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    statusMessage.textContent = `Error: ${data.error}`;
+                } else {
+                    statusMessage.textContent = "Report generated successfully!";
+                    downloadReportLink.href = data.report_link;
+                    reportSection.classList.remove("hidden");
+                }
+            })
+            .catch(error => {
+                statusMessage.textContent = "Report generation failed. Please try again.";
             });
         }
     </script>

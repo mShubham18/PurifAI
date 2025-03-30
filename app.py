@@ -4,6 +4,7 @@ import os
 from pipelines.data_cleaning import clean_data
 from pipelines.data_standardization import standardize_data
 from pipelines.column_selection import column_selection
+from components.report_generation import generate_report
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "processed_files"
@@ -47,13 +48,41 @@ def service():
             output_filename = os.path.join(UPLOAD_FOLDER, "processed_data.csv")
             final_df.to_csv(output_filename, index=False)
 
-            return jsonify({"message": "File processed successfully", "download_link": "/download"})
+            return jsonify({
+                "message": "File processed successfully", 
+                "download_link": "/download",
+                "report_link": "/generate_report"
+            })
 
         except Exception as e:
             return jsonify({"error": f"Processing failed: {str(e)}"}), 500
 
     return render_template("service.html")
 
+@app.route("/generate_report")
+def generate_report_route():
+    try:
+        # Read the processed data
+        processed_file = os.path.join(UPLOAD_FOLDER, "processed_data.csv")
+        if not os.path.exists(processed_file):
+            return jsonify({"error": "Processed file not found"}), 404
+            
+        df = pd.read_csv(processed_file)
+        
+        # Generate report using Gemini
+        report = generate_report(df)
+        
+        # Save report to file with UTF-8 encoding
+        report_file = os.path.join(UPLOAD_FOLDER, "report.md")
+        with open(report_file, "w", encoding='utf-8', errors='ignore') as f:
+            f.write(report)
+            
+        return jsonify({
+            "message": "Report generated successfully",
+            "report_link": "/download_report"
+        })
+    except Exception as e:
+        return jsonify({"error": f"Report generation failed: {str(e)}"}), 500
 
 @app.route("/download")
 def download_file():
@@ -61,6 +90,18 @@ def download_file():
     if os.path.exists(output_file):
         return send_file(output_file, as_attachment=True)
     return "File not found", 404
+
+@app.route("/download_report")
+def download_report():
+    report_file = os.path.join(UPLOAD_FOLDER, "report.md")
+    if os.path.exists(report_file):
+        return send_file(
+            report_file,
+            as_attachment=True,
+            mimetype='text/markdown',
+            download_name='report.md'
+        )
+    return "Report not found", 404
 
 @app.route("/plans")
 def plans():
