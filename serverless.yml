@@ -1,0 +1,14 @@
+service: purifai
+
+provider:
+  name: netlify
+  runtime: python3.9
+
+functions:
+  api:
+    handler: app.app
+    events:
+      - http:
+          path: /api/*
+          method: any
+          cors: true 

@@ -149,4 +149,6 @@ def download_generated():
     return "File not found", 404
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    #app.run(debug=True)
+    app.run(host="0.0.0.0",debug=True,port=port)
