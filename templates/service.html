@@ -116,10 +116,10 @@
         <p id="statusMessage" class="mt-4 text-gray-400"></p>
         <div id="downloadSection" class="hidden mt-4 space-y-4">
             <div class="flex flex-col gap-4">
-                <a id="downloadLink" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 rounded-lg text-center">Download Processed File</a>
-                <button id="generateReportBtn" onclick="generateReport()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg">Generate Report</button>
+                <a id="downloadLink" class="bg-gray-600 hover:bg-gray-500 text-black font-semibold py-3 px-6 rounded-lg text-center">Download Processed File</a>
+                <button id="generateReportBtn" onclick="generateReport()" class="bg-gray-600 hover:bg-gray-500 text-black font-semibold py-3 px-6 rounded-lg">Generate Report</button>
                 <div id="reportSection" class="hidden">
-                    <a id="downloadReportLink" class="bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 px-6 rounded-lg text-center">Download Report</a>
+                    <a id="downloadReportLink" class="bg-gray-600 hover:bg-gray-500 text-black font-semibold py-3 px-6 rounded-lg text-center">Download Report</a>
                 </div>
             </div>
         </div>
@@ -190,6 +190,13 @@
             let statusMessage = document.getElementById("statusMessage");
             let reportSection = document.getElementById("reportSection");
             let downloadReportLink = document.getElementById("downloadReportLink");
+            let downloadSection = document.getElementById("downloadSection");
+
+            // Check if file has been processed (download section is visible)
+            if (downloadSection.classList.contains("hidden")) {
+                statusMessage.textContent = "Please upload and process a file first before generating a report.";
+                return;
+            }
 
             statusMessage.textContent = "Generating report... Please wait.";
 
