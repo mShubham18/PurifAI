@@ -33,8 +33,6 @@
             <a href="{{ url_for('home') }}" class="hover:text-blue-400 text-lg transition duration-300">Home</a>
             <a href="{{ url_for('service') }}" class="hover:text-blue-400 text-lg transition duration-300">Clean Data</a>
             <a href="{{ url_for('generate') }}" class="hover:text-blue-400 text-lg transition duration-300">Generate Data</a>
-            <a href="{{ url_for('plans') }}" class="hover:text-blue-400 text-lg transition duration-300">Plans</a>
-            <a href="#contact" class="hover:text-blue-400 text-lg transition duration-300">Contact</a>
         </div>
     </nav>
 
@@ -42,7 +40,7 @@
 
     <!-- Hero Section -->
     <section class="w-3/4 text-center py-16 fade-in">
-        <h2 class="text-4xl font-bold text-gray-400 glow-text">Transform Your Data with AI</h2>
+        <h2 id="typing-text" class="text-4xl font-bold text-white-400 glow-y"></h2>
         <p class="mt-4 text-gray-300 text-lg">Leverage AI-powered cleaning for error-free, high-quality datasets.</p>
     </section>
     <!-- Features Section -->
@@ -128,6 +126,23 @@
     </section>
 
     <script>
+
+    <!-- Typing Animation Script -->    
+        const text = "Transform Your Data with AI";
+        let index = 0;
+        
+        function typeEffect() {
+            if (index < text.length) {
+                document.getElementById("typing-text").innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeEffect, 50); // Adjust speed here
+            }
+        }
+
+        window.onload = () => {
+            setTimeout(typeEffect, 500); // Small delay before animation starts
+        };
+
         document.getElementById("fileInput").addEventListener("change", function() {
             let file = this.files[0];
             document.getElementById("fileName").textContent = file ? `Selected: ${file.name}` : "No file chosen";
