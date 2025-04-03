@@ -43,7 +43,7 @@ Watch the live demo of PurifAI in action:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/purifai.git
+git clone https://github.com/mShubham18/PurifAI.git
 cd purifai
 ```
 
